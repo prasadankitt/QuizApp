@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">MCQ Quiz</string>
+    <string name="loading">Loading questions...</string>
+    <string name="skip_question">Skip Question</string>
+    <string name="restart_quiz">Restart Quiz</string>
+    <string name="quiz_complete">Quiz Complete!</string>
+    <string name="score">Score</string>
+    <string name="correct_answers">Correct Answers</string>
+    <string name="skipped_questions">Skipped Questions</string>
+    <string name="longest_streak">Longest Streak</string>
+    <string name="streak_format">Streak: %d</string>
+    <string name="question_counter_format">%d/%d</string>
+    <string name="correct_answers_format">%d/%d</string>
+</resources>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <!-- Primary Colors -->
+    <color name="primary">#6366F1</color>
+    <color name="primary_dark">#4F46E5</color>
+    <color name="primary_light">#A5B4FC</color>
+
+    <!-- Background Colors -->
+    <color name="background">#F8FAFC</color>
+    <color name="card_background">#FFFFFF</color>
+    <color name="card_border">#E2E8F0</color>
+
+    <!-- Text Colors -->
+    <color name="text_primary">#1E293B</color>
+    <color name="text_secondary">#64748B</color>
+
+    <!-- Button Colors -->
+    <color name="button_normal">#FFFFFF</color>
+    <color name="button_pressed">#F1F5F9</color>
+    <color name="button_border">#D1D5DB</color>
+    <color name="button_ripple">#E2E8F0</color>
+
+    <!-- Answer Colors -->
+    <color name="correct_answer">#10B981</color>
+    <color name="wrong_answer">#EF4444</color>
+
+    <!-- Streak Colors -->
+    <color name="streak_active">#FCD34D</color>
+    <color name="streak_inactive">#F3F4F6</color>
+    <color name="streak_border_active">#F59E0B</color>
+    <color name="streak_border_inactive">#D1D5DB</color>
+
+    <!-- Skip Button -->
+    <color name="skip_button_background">#F8FAFC</color>
+    <color name="skip_button_border">#CBD5E1</color>
+    <color name="skip_color">#64748B</color>
+
+    <!-- Progress -->
+    <color name="progress_background">#E2E8F0</color>
+
+    <!-- Icon Background -->
+    <color name="icon_background">#F1F5F9</color>
+</resources>

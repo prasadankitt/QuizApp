@@ -1,33 +1,28 @@
 package com.example.quizapp.ui.result
 
+import android.animation.ValueAnimator
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.widget.Button
-import android.widget.TextView
+import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
+import androidx.core.animation.doOnEnd
 import com.example.quizapp.data.model.QuizResult
 import com.example.quizapp.ui.quiz.QuizActivity
 import com.example.quizapp.utils.fadeInAnimation
 import com.example.quizapp.utils.scaleAnimation
 import com.example.quizapp.utils.slideInFromBottom
 import com.quizapp.R
+import com.quizapp.databinding.ActivityResultBinding
 
 class ResultActivity : AppCompatActivity() {
 
-    private lateinit var scoreText: TextView
-    private lateinit var correctAnswersText: TextView
-    private lateinit var skippedQuestionsText: TextView
-    private lateinit var longestStreakText: TextView
-    private lateinit var restartButton: Button
-
-    private val handler = Handler(Looper.getMainLooper())
+    private var pendingAnimators = mutableListOf<ValueAnimator>()
+    private lateinit var binding: ActivityResultBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_result)
+        binding = ActivityResultBinding.inflate(LayoutInflater.from(this@ResultActivity))
+        setContentView(binding.root)
 
         initViews()
 
@@ -37,14 +32,7 @@ class ResultActivity : AppCompatActivity() {
         }
     }
 
-    private fun initViews() {
-        scoreText = findViewById(R.id.scoreText)
-        correctAnswersText = findViewById(R.id.correctAnswersText)
-        skippedQuestionsText = findViewById(R.id.skippedQuestionsText)
-        longestStreakText = findViewById(R.id.longestStreakText)
-        restartButton = findViewById(R.id.restartButton)
-
-        // Initially hide elements for animation
+    private fun initViews() = with(binding) {
         scoreText.alpha = 0f
         correctAnswersText.alpha = 0f
         skippedQuestionsText.alpha = 0f
@@ -57,12 +45,12 @@ class ResultActivity : AppCompatActivity() {
         }
     }
 
-    private fun animateResultsDisplay(result: QuizResult) {
+    private fun animateResultsDisplay(result: QuizResult) = with(binding) {
         // Animate score with counting effect
         animateScoreCounter(result.scorePercentage)
 
-        // Staggered animation for stats
-        handler.postDelayed({
+        // Staggered animation for stats using alpha animators with delays
+        correctAnswersText.postDelayed({
             correctAnswersText.text = getString(
                 R.string.correct_answers_format,
                 result.correctAnswers,
@@ -71,42 +59,36 @@ class ResultActivity : AppCompatActivity() {
             correctAnswersText.fadeInAnimation(400)
         }, 800)
 
-        handler.postDelayed({
+        skippedQuestionsText.postDelayed({
             skippedQuestionsText.text = result.skippedQuestions.toString()
             skippedQuestionsText.fadeInAnimation(400)
         }, 1200)
 
-        handler.postDelayed({
+        longestStreakText.postDelayed({
             longestStreakText.text = result.longestStreak.toString()
             longestStreakText.fadeInAnimation(400)
         }, 1600)
 
-        handler.postDelayed({
+        restartButton.postDelayed({
             restartButton.slideInFromBottom(500)
         }, 2000)
     }
 
-    private fun animateScoreCounter(targetScore: Int) {
+    private fun animateScoreCounter(targetScore: Int) = with(binding) {
         scoreText.fadeInAnimation(600)
 
-        var currentScore = 0
-        val increment = maxOf(1, targetScore / 30) // Animate over ~1 second
-
-        val countingRunnable = object : Runnable {
-            override fun run() {
-                currentScore += increment
-                if (currentScore >= targetScore) {
-                    currentScore = targetScore
-                    scoreText.text = "$currentScore%"
-                    scoreText.scaleAnimation(1.0f, 1.1f, 300, true)
-                } else {
-                    scoreText.text = "$currentScore%"
-                    handler.postDelayed(this, 33) // ~30 FPS
-                }
+        val animator = ValueAnimator.ofInt(0, targetScore).apply {
+            duration = 1000
+            addUpdateListener {
+                val value = it.animatedValue as Int
+                scoreText.text = "$value%"
+            }
+            doOnEnd {
+                scoreText.scaleAnimation(1.0f, 1.1f, 300, true)
             }
         }
-
-        handler.postDelayed(countingRunnable, 500)
+        pendingAnimators.add(animator)
+        scoreText.postDelayed({ animator.start() }, 500)
     }
 
     private fun restartQuiz() {
@@ -118,7 +100,8 @@ class ResultActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        handler.removeCallbacksAndMessages(null)
+        pendingAnimators.forEach { it.cancel() }
+        pendingAnimators.clear()
         super.onDestroy()
     }
 }

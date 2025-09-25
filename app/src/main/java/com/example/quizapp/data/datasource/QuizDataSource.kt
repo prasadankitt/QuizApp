@@ -3,8 +3,6 @@ package com.example.quizapp.data.datasource
 import com.example.quizapp.data.model.Question
 
 class QuizDataSource {
-
-    // Sample JSON data - In real app, this would come from API
     private val jsonData = """
     {
       "questions": [
@@ -12,80 +10,68 @@ class QuizDataSource {
           "id": 1,
           "question": "What is the capital of France?",
           "options": ["London", "Berlin", "Paris", "Madrid"],
-          "correctAnswer": 2,
-          "explanation": "Paris is the capital and largest city of France."
+          "correctOptionIndex": 2
         },
         {
           "id": 2,
           "question": "Which planet is known as the Red Planet?",
           "options": ["Venus", "Mars", "Jupiter", "Saturn"],
-          "correctAnswer": 1,
-          "explanation": "Mars is called the Red Planet due to iron oxide on its surface."
+          "correctOptionIndex": 1
         },
         {
           "id": 3,
           "question": "What is 15 + 28?",
           "options": ["41", "43", "45", "47"],
-          "correctAnswer": 1,
-          "explanation": "15 + 28 = 43"
+          "correctOptionIndex": 1
         },
         {
           "id": 4,
           "question": "Who painted the Mona Lisa?",
           "options": ["Vincent van Gogh", "Leonardo da Vinci", "Pablo Picasso", "Claude Monet"],
-          "correctAnswer": 1,
-          "explanation": "Leonardo da Vinci painted the Mona Lisa between 1503-1519."
+          "correctOptionIndex": 1
         },
         {
           "id": 5,
           "question": "What is the largest ocean on Earth?",
           "options": ["Atlantic Ocean", "Indian Ocean", "Arctic Ocean", "Pacific Ocean"],
-          "correctAnswer": 3,
-          "explanation": "The Pacific Ocean is the largest ocean, covering about 46% of Earth's water surface."
+          "correctOptionIndex": 3
         },
         {
           "id": 6,
           "question": "In which year did World War II end?",
           "options": ["1944", "1945", "1946", "1947"],
-          "correctAnswer": 1,
-          "explanation": "World War II ended in 1945 with Japan's surrender in September."
+          "correctOptionIndex": 1
         },
         {
           "id": 7,
           "question": "What is the chemical symbol for gold?",
           "options": ["Go", "Gd", "Au", "Ag"],
-          "correctAnswer": 2,
-          "explanation": "Au is the chemical symbol for gold, from the Latin word 'aurum'."
+          "correctOptionIndex": 2
         },
         {
           "id": 8,
           "question": "Which is the smallest country in the world?",
           "options": ["Monaco", "Vatican City", "San Marino", "Liechtenstein"],
-          "correctAnswer": 1,
-          "explanation": "Vatican City is the smallest country with an area of just 0.17 square miles."
+          "correctOptionIndex": 1
         },
         {
           "id": 9,
           "question": "What is the speed of light in vacuum?",
           "options": ["299,792,458 m/s", "300,000,000 m/s", "299,000,000 m/s", "298,792,458 m/s"],
-          "correctAnswer": 0,
-          "explanation": "The speed of light in vacuum is exactly 299,792,458 meters per second."
+          "correctOptionIndex": 0
         },
         {
           "id": 10,
           "question": "Which programming language is Android primarily built with?",
           "options": ["Swift", "Java/Kotlin", "Python", "C++"],
-          "correctAnswer": 1,
-          "explanation": "Android apps are primarily developed using Java and Kotlin languages."
+          "correctOptionIndex": 1
         }
       ]
     }
     """
 
-    suspend fun getQuestions(): List<Question> {
+    fun getQuestions(): List<Question> {
         return try {
-            // Simulate network delay
-            kotlinx.coroutines.delay(1500)
 
             val jsonObject = org.json.JSONObject(jsonData)
             val questionsArray = jsonObject.getJSONArray("questions")
@@ -105,8 +91,7 @@ class QuizDataSource {
                         id = questionObj.getInt("id"),
                         question = questionObj.getString("question"),
                         options = options,
-                        correctAnswer = questionObj.getInt("correctAnswer"),
-                        explanation = questionObj.optString("explanation")
+                        correctOptionIndex = questionObj.getInt("correctOptionIndex")
                     )
                 )
             }

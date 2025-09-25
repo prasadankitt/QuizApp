@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MCQ Quiz</string>
+    <string name="app_name">QuizApp</string>
     <string name="loading">Loading questions...</string>
     <string name="skip_question">Skip Question</string>
     <string name="restart_quiz">Restart Quiz</string>

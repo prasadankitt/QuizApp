@@ -9,12 +9,10 @@ data class QuizResult(
     val correctAnswers: Int,
     val skippedQuestions: Int,
     val longestStreak: Int,
-    val userAnswers: List<Int?> // null for skipped questions
+    val userAnswers: List<Int?>
 ) : Parcelable {
 
     val scorePercentage: Int
         get() = if (totalQuestions > 0) (correctAnswers * 100) / totalQuestions else 0
 
-    val wrongAnswers: Int
-        get() = totalQuestions - correctAnswers - skippedQuestions
 }

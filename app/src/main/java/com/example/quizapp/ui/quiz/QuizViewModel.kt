@@ -1,17 +1,20 @@
 package com.example.quizapp.ui.quiz
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.quizapp.data.model.Question
 import com.example.quizapp.data.model.QuizResult
 import com.example.quizapp.domain.usecase.GetQuestionsUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class QuizViewModel(
+@HiltViewModel
+class QuizViewModel @Inject constructor(
     private val getQuestionsUseCase: GetQuestionsUseCase
 ) : ViewModel() {
 
@@ -55,7 +58,7 @@ class QuizViewModel(
 
         userAnswers[currentIndex] = answerIndex
 
-        val isCorrect = answerIndex == currentQuestion.correctAnswer
+        val isCorrect = answerIndex == currentQuestion.correctOptionIndex
         if (isCorrect) {
             currentStreak++
             longestStreak = maxOf(longestStreak, currentStreak)
@@ -71,9 +74,8 @@ class QuizViewModel(
             isStreakActive = currentStreak >= 3
         )
 
-        // Auto advance after 2 seconds
         viewModelScope.launch {
-            kotlinx.coroutines.delay(2000)
+            delay(2000)
             nextQuestion()
         }
     }
@@ -96,7 +98,6 @@ class QuizViewModel(
                 showAnswer = false
             )
         } else {
-            // Quiz completed
             _uiState.value = _uiState.value.copy(isQuizCompleted = true)
         }
     }
@@ -104,7 +105,7 @@ class QuizViewModel(
     fun getQuizResult(): QuizResult {
         val correctAnswers = userAnswers.zip(_questions.value)
             .count { (userAnswer, question) ->
-                userAnswer != null && userAnswer == question.correctAnswer
+                userAnswer != null && userAnswer == question.correctOptionIndex
             }
         val skippedQuestions = userAnswers.count { it == null }
 
@@ -114,17 +115,6 @@ class QuizViewModel(
             skippedQuestions = skippedQuestions,
             longestStreak = longestStreak,
             userAnswers = userAnswers.toList()
-        )
-    }
-
-    fun restartQuiz() {
-        currentStreak = 0
-        longestStreak = 0
-        userAnswers.clear()
-        repeat(_questions.value.size) { userAnswers.add(null) }
-
-        _uiState.value = QuizUiState(
-            currentQuestionIndex = 0
         )
     }
 }
@@ -140,15 +130,3 @@ data class QuizUiState(
     val isQuizCompleted: Boolean = false,
     val error: String? = null
 )
-
-class QuizViewModelFactory(
-    private val getQuestionsUseCase: GetQuestionsUseCase
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(QuizViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return QuizViewModel(getQuestionsUseCase) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
-    }
-}
